@@ -1,0 +1,1 @@
+"Seriously? Even the 2012 version of Visual Studio still doesn't support C99? WTF Microsoft?"

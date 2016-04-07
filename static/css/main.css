@@ -1,0 +1,79 @@
+html, body {
+    height: 100%;
+}
+
+#container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-left {
+    justify-content: flex-start;
+}
+.sub {
+    font-size:75%;
+}
+.flex-right {
+    margin-left: auto;
+}
+
+#banner {
+    display: flex;
+    flex-direction: row;
+    background: #1da1f2;
+    flex: 1;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0.5%;
+    color: white;
+    font-weight: 600;
+    font-size: 150%;
+}
+
+#content {
+    display: flex;
+    flex: 30;
+    flex-direction: column;
+    height: 100%;
+
+    width: 100%;
+}
+
+.cont-container {
+    display: flex;
+    flex: 15;
+    flex-direction: row;
+}
+
+#title-bar {
+    padding: 0.5%;
+}
+
+#results-areas {
+    display: flex;
+    flex: 6;
+    flex-direction: column;
+    background: #f5f5f5;
+}
+
+#config {
+    display: flex;
+    flex: 1;
+    background: #f1f1f1;
+    border-bottom: solid 1px #ccc;
+    align-items: center;
+    padding: 0.5%;
+}
+
+/** Trending area */
+#trending-tags {
+    background: white;
+    padding: 1%;
+    flex: 1;
+    overflow: auto;
+}
+
+.trend {
+    margin-bottom: 3px;
+}
