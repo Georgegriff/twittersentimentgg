@@ -77,3 +77,83 @@ html, body {
 .trend {
     margin-bottom: 3px;
 }
+
+#data {
+    display:flex;
+    flex-direction: row;
+}
+
+
+
+ .dropdown {
+     width:90%;
+ }
+ .dropdown select {
+     width:100%;
+ }
+.dropdown option,
+.dropdown:after,
+.dropdown::after,
+.dropdown select
+{
+    color: #fff;
+}
+ 
+:root .dropdown select,
+:root .dropdown:after,
+:root .dropdown::after
+{
+    display: block;
+    background: #aaaaaa;
+}
+ 
+:root .dropdown select,
+:root .dropdown option
+{
+    padding: 8px;
+}
+ 
+:root .dropdown
+{
+    position: relative;
+    display: inline-block;
+    border: 0;
+}
+ 
+:root .dropdown::after
+{
+    content: "\25bc";
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    width: 32px;
+    font-size: 12px;
+    line-height: 34px;
+    text-align: center;
+     
+    -webkit-pointer-events: none;
+    -moz-pointer-events: none;
+    pointer-events: none;
+}
+ 
+:root .dropdown select
+{
+   height: 34px;
+   border: 0;
+   vertical-align: middle;
+   font: normal 12px/14px "Segoe UI", Arial, Helvetica, Sans-serif;
+   outline: 0 none;
+
+}
+ 
+:root .dropdown option
+{
+    background: #fff;
+    color: #333;
+     background: #add8e6;
+}
+
+.jvectormap-container {
+    background: transparent !important;
+}

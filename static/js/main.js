@@ -4,7 +4,8 @@ var twitterApp = (function () {
         total_neg = 0,
         POSITIVE = 1,
         NEGATIVE = 0,
-        pieChart;
+        pieChart,
+        self;
 
     function initResults() {
         return [{
@@ -19,12 +20,14 @@ var twitterApp = (function () {
 
 
     function init(options) {
+        self = this;
         console.log(options);
         showTrendingData();
-        this.charting.createPieChart('#pie-chart', results, function (chart) {
+        self.charting.createPieChart('#pie-chart', results, function (chart) {
             pieChart = chart;
         });
         searchPressed();
+        self.charting.createWorldMap();
     }
 
 
@@ -55,9 +58,11 @@ var twitterApp = (function () {
                 var data = value.data,
                     result = data.result;
                 if (result) {
+                    console.log(data);
                     if (result === 1) {
                         total_pos++;
                         setPieResult(POSITIVE, total_pos);
+                        self.charting.addResultToRegion(data.result, data.location);
                     } else {
                         total_neg++;
                         setPieResult(NEGATIVE, total_neg);
@@ -70,14 +75,17 @@ var twitterApp = (function () {
         }
     }
 
-
     function streamResults(query) {
-        queryAPI(query, onDataReceived);
+        var codes = self.charting.getRegionCodes();
+        codes.forEach(function (code) {
+            queryAPI(query, code, onDataReceived);
+        })
+
     }
 
 
-    function queryAPI(query, onDataReceived) {
-        var uri = '/linearsvc?q=' + query;
+    function queryAPI(query, code, onDataReceived) {
+        var uri = '/linearsvc?q=' + query + "&code=" + code;
         return ajax_stream(uri, onDataReceived)
     }
 

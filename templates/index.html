@@ -27,12 +27,19 @@
                 <div id="title-bar">
                     <h3 id="search-title">Showing Results For: </h3>
                 </div>
-                <div id="graphs">
-                    <svg id="pie-chart"></svg>
+                <div id="data">
+                    <div id="graphs">
+                        <svg id="pie-chart"></svg>
+                    </div>
+                    <div id="worldmap" style="width: 640px; height: 480px"></div>
                 </div>
-                <div id="data"></div>
             </div>
             <div id="trending-tags">
+                <span id="trending-drop" class="dropdown">
+                    <select name="trending">
+                        <option value="23424977">United States</option>
+                    </select>
+                </span>
                 <h2>Trending</h2>
             </div>
 
@@ -42,6 +49,9 @@
 <script>
     $(document).ready(function () {
         twitterApp.init();
+        $(".dropdown").change(function () {
+            $("option:selected").css({"background": "white"});
+        });
     })
 </script>
 </body>

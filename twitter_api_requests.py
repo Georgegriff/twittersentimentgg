@@ -14,16 +14,16 @@ class TwitterAPI:
         auth.set_access_token(access_token, access_token_secret)
         self.api = tweepy.API(auth)
 
-    def search_twitter(self, query='',  items=100):
+    def search_twitter(self, query='', geo= '&geocode=37.781157%2C-122.398720%2C1mi', items=100):
             try:
-                return tweepy.Cursor(self.api.search, q=query, lang='en').items(items)
+                return tweepy.Cursor(self.api.search, q=query, geocode = geo, lang='en').items(items)
             except tweepy.TweepError as e:
                 print e
                 return []
 
-    def find_trending(self):
+    def find_trending(self, location = 23424977):
         try:
-            trends1 = self.api.trends_place(1)
+            trends1 = self.api.trends_place(location)
             data = trends1[0]
             trends = data['trends']
             names = [trend['name'] for trend in trends]
