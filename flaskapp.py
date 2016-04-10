@@ -42,7 +42,7 @@ def predict_linear_svc():
     search_term = request.args.get('q')
     code = request.args.get('code')
     geo = get_geo_string(code)
-    tweets = api.search_twitter(search_term, geo, 1git0)
+    tweets = api.search_twitter(search_term, geo, 10)
     def events():
         for tweet in tweets:
             results = svm.predict([tweet.text])

@@ -45,7 +45,6 @@ var twitterApp = (function () {
 
     function init(options) {
         self = this;
-        console.log(options);
         showTrendingData();
         self.charting.createPieChart('#pie-chart', results, function (chart) {
             pieChart = chart;
@@ -57,6 +56,7 @@ var twitterApp = (function () {
 
     function searchPressed() {
         $('.search').find('button').click(function () {
+            self.charting.resetRegionData();
             searchQuery();
 
         })
@@ -76,22 +76,20 @@ var twitterApp = (function () {
     }
 
 
-    function onDataReceived(data) {
-        if (data) {
-            data.forEach(function (value) {
+    function onDataReceived(datas) {
+        if (datas) {
+            console.log(datas);
+            datas.forEach(function (value) {
                 var data = value.data,
                     result = data.result;
-                if (result) {
-                    console.log(data);
-                    if (result === 1) {
-                        total_pos++;
-                        setPieResult(POSITIVE, total_pos);
-                        self.charting.addResultToRegion(data.result, data.location);
-                    } else {
-                        total_neg++;
-                        setPieResult(NEGATIVE, total_neg);
-                    }
+                if (result === 1) {
+                    total_pos++;
+                    setPieResult(POSITIVE, total_pos);
+                } else {
+                    total_neg++;
+                    setPieResult(NEGATIVE, total_neg);
                 }
+                self.charting.addResultToRegion(data.result, data.location);
 
 
             });
@@ -221,7 +219,10 @@ twitterApp.charting = (function () {
                 '#e5d700', '#c4e500', '#96e500', '#67e500', '#39e500', '#0ae600'],
             totalColors = colourPalette.length,
             color = Math.floor(totalColors * percentage) - 1;
-        return colourPalette[color] ||  "#AEC7E8";
+        if (color < 0) {
+            color = 0;
+        }
+        return colourPalette[color] || "#AEC7E8";
 
     }
 
@@ -279,6 +280,11 @@ twitterApp.charting = (function () {
         createWorldMap: createWorldMap,
         getRegionCodes: function () {
             return regionCodes;
+        },
+        resetRegionData: function resetRegionData() {
+            for (var key in map.regions) {
+                regionData[key] = {"pos": 0, "neg": 0, "tot": 0};
+            }
         },
         addResultToRegion: addResultToRegion
 

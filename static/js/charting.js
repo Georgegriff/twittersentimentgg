@@ -38,7 +38,10 @@ twitterApp.charting = (function () {
                 '#e5d700', '#c4e500', '#96e500', '#67e500', '#39e500', '#0ae600'],
             totalColors = colourPalette.length,
             color = Math.floor(totalColors * percentage) - 1;
-        return colourPalette[color] ||  "#AEC7E8";
+        if (color < 0) {
+            color = 0;
+        }
+        return colourPalette[color] || "#AEC7E8";
 
     }
 
@@ -96,6 +99,11 @@ twitterApp.charting = (function () {
         createWorldMap: createWorldMap,
         getRegionCodes: function () {
             return regionCodes;
+        },
+        resetRegionData: function resetRegionData() {
+            for (var key in map.regions) {
+                regionData[key] = {"pos": 0, "neg": 0, "tot": 0};
+            }
         },
         addResultToRegion: addResultToRegion
 
