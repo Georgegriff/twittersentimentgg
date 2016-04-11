@@ -60,11 +60,11 @@ var twitterApp = (function () {
                     result = data.result;
                 if (result === 1) {
                     total_pos++;
-                    setPieResult(POSITIVE, total_pos);
                 } else {
                     total_neg++;
-                    setPieResult(NEGATIVE, total_neg);
                 }
+                 setPieResult(NEGATIVE, total_neg);
+                 setPieResult(POSITIVE, total_pos);
                 self.charting.addResultToRegion(data.result, data.location);
 
 
