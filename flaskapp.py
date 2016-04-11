@@ -24,7 +24,7 @@ init_geo_codes()
 
 def get_geo_string(code):
     loc = region_codes[code]
-    return loc["lat"] + "," + loc["lng"] + ",200mi"
+    return loc["lat"] + "," + loc["lng"] + ",250mi"
 
 @app.route('/')
 def home_page():
