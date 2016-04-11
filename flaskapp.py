@@ -5,7 +5,7 @@ import time
 import itertools
 
 app = Flask(__name__)
-
+-app.config.from_pyfile('flaskapp.cfg')
 from site_conf import SiteConfig
 import os
 import csv
