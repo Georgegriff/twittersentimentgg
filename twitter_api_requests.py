@@ -1,36 +1,13 @@
-consumer_key = "uhSIdEYDT1FrUbHvZHpADHKwV"
-consumer_secret = 'zbxE2mIIcISQpHXPoiAtzoS8ExU0NXhb0DF2HtqKRDaSWMsiTf'
-access_token = '568372184-6vq61njUZkn0RcgACBgfdRs6CzkGvkFJR0J7v3vx'
-access_token_secret = 'DLc5FgDXSiYLVtplQM0Z01BEsbww9EgcNK4QyQwuyvJHW'
-
-accounts = [
-    {
-        'consumer_key': "uhSIdEYDT1FrUbHvZHpADHKwV",
-        'consumer_secret': 'zbxE2mIIcISQpHXPoiAtzoS8ExU0NXhb0DF2HtqKRDaSWMsiTf',
-        'access_token': '568372184-6vq61njUZkn0RcgACBgfdRs6CzkGvkFJR0J7v3vx',
-        'access_token_secret': 'DLc5FgDXSiYLVtplQM0Z01BEsbww9EgcNK4QyQwuyvJHW'
-    },
-    {
-        'consumer_key': "gHsPyTHYZs3r391MScDEFJdtS",
-        'consumer_secret': 'R57qa4vzUHcba5w9d0SAVtppAvUzlHShSrJ38KDpDQLJ7onDsG',
-        'access_token': '719291610987642881-jSqoOhhXlfcudPyBStMhLJVcra8b1Sv',
-        'access_token_secret': 'taFU3qzpLXmRIeW2FKjZ01sl8zHsDYl9dJvFl3Z1s4Fon'
-    },
-    {
-        'consumer_key': "mlyk3hLX913j09tlSrw4Jkgxr",
-        'consumer_secret': 'OXClWBP6UiF8o1ecGoRybzSIAjZrBchykMYE84UX9aWmVP0k3n',
-        'access_token': '719300342115143681-DhPUFXd7YR5biVQBTL0JbXOKQPTo53E',
-        'access_token_secret': 'dNzTbpTd5DkFc1xfAMPKne59ZFLFMXEbYI8Iq9MbjjWeE'
-    }
-]
-
 import tweepy
+from twitter_svm import TwitterSVM
+from flask import Response
+
+svm = TwitterSVM()
 
 
 class TwitterAPI:
-
     def select_acc(self, number):
-        acc = accounts[number]
+        acc = self.accounts[number]
         auth = tweepy.OAuthHandler(acc["consumer_key"], acc["consumer_secret"])
         auth.set_access_token(acc["access_token"], acc["access_token_secret"])
         self.api = tweepy.API(auth)
@@ -38,18 +15,91 @@ class TwitterAPI:
     def __init__(self):
         self.cached_trends = []
 
-        self.select_acc(1)
+        self.accounts = [
+            {
+                'consumer_key': "uhSIdEYDT1FrUbHvZHpADHKwV",
+                'consumer_secret': 'zbxE2mIIcISQpHXPoiAtzoS8ExU0NXhb0DF2HtqKRDaSWMsiTf',
+                'access_token': '568372184-6vq61njUZkn0RcgACBgfdRs6CzkGvkFJR0J7v3vx',
+                'access_token_secret': 'DLc5FgDXSiYLVtplQM0Z01BEsbww9EgcNK4QyQwuyvJHW',
+            },
+            {
+                'consumer_key': "gHsPyTHYZs3r391MScDEFJdtS",
+                'consumer_secret': 'R57qa4vzUHcba5w9d0SAVtppAvUzlHShSrJ38KDpDQLJ7onDsG',
+                'access_token': '719291610987642881-jSqoOhhXlfcudPyBStMhLJVcra8b1Sv',
+                'access_token_secret': 'taFU3qzpLXmRIeW2FKjZ01sl8zHsDYl9dJvFl3Z1s4Fon',
+            },
+            {
+                'consumer_key': "mlyk3hLX913j09tlSrw4Jkgxr",
+                'consumer_secret': 'OXClWBP6UiF8o1ecGoRybzSIAjZrBchykMYE84UX9aWmVP0k3n',
+                'access_token': '719300342115143681-DhPUFXd7YR5biVQBTL0JbXOKQPTo53E',
+                'access_token_secret': 'dNzTbpTd5DkFc1xfAMPKne59ZFLFMXEbYI8Iq9MbjjWeE',
+            },
+            {
+                'consumer_key': "g0r5v3qlbDVFt9iargHz0XsFT",
+                'consumer_secret': 'Y579ecpoMN5OQPymrrq1RaOxyH8ISHEzdcko4ogvASBybj8ltR',
+                'access_token': ' 719615862223826944-sP0vIwuWkLCEhq19KsV7a0BxUz1Xz31',
+                'access_token_secret': 'yPEhpfg0j77ZUfeo34PrmUAMomftkLzZjHAkyRu5qo3qR',
+            }
+        ]
+        self.account_len = len(self.accounts)
 
-        self.attempts = 0
-        self.account_len = len(accounts)
+        self.select_acc(0)
 
-    def search_twitter(self, query='', geo='&geocode=37.781157%2C-122.398720%2C1mi', items=100):
+        self.current_acc = 0
+
+        self.fail_count = 0
+
+    def perform_search(self, max_id, query, geo, items):
+        tweet_list = []
         try:
-            return tweepy.Cursor(self.api.search, q=query, geocode=geo, lang='en').items(items)
+            if max_id <= 0:
+                tweet_list = self.api.search(q=query, geocode=geo, lang='en', count=items)
+            else:
+                tweet_list = self.api.search(q=query, geocode=geo, lang='en', count=items,
+                                             max_id=str(max_id - 1))
         except tweepy.TweepError as e:
             print e
+            if self.fail_count < self.account_len:
+                print "Switching Accounts..."
+                self.fail_count += 1
+                if self.current_acc == self.account_len - 1:
+                    self.current_acc = 0
+                else:
+                    self.current_acc += 1
+                self.select_acc(self.current_acc)
+                self.perform_search(max_id, query, geo, items)
+            else:
+                print "Out of Accounts..."
+                self.fail_count = 0
+                tweet_list = []
+        return tweet_list
 
-            return []
+    def search_twitter(self, query='', geo='&geocode=37.781157%2C-122.398720%2C1mi', code='',
+                       items=100, max_tweets=100):
+
+        def events(code):
+            tweet_list = []
+            searched_tweets = 0
+            max_id = 0
+            is_done = False
+            while searched_tweets < max_tweets and not (is_done):
+                before_size = searched_tweets
+                tweet_list = self.perform_search(max_id, query, geo, items)
+                if (searched_tweets + len(tweet_list) == before_size):
+                    is_done = True
+                self.fail_count = 0
+                searched_tweets += len(tweet_list)
+                # update the last tweet
+                if len(tweet_list) > 0:
+                    max_id = tweet_list[-1].id
+
+                print "Tweet total: %s" % (searched_tweets)
+                for tweet in tweet_list:
+                    results = svm.predict([tweet.text])
+                    yield '{"data":{"result": %s, "location":"%s" }}' % (results[0], code)
+                    yield ','
+
+        return Response(events(code), mimetype='application/json')
 
     def find_trending(self, location=23424977):
         try:
