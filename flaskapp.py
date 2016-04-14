@@ -17,19 +17,24 @@ region_codes = {}
 
 
 def init_geo_codes():
-    file_path = os.path.join(os.path.dirname(__file__), "./state_latlon.csv")
+    file_path = os.path.join(os.path.dirname(__file__), "./state_twitter_place_id.csv")
     with open(file_path, 'rb') as csvfile:
         filereader = csv.reader(csvfile, delimiter=',', quotechar='|')
         for row in filereader:
-            region_codes["US-" + row[0]] = {'lat': row[1], 'lng': row[2]}
+            if "USA" in row[3]:
+                region_codes["US-" + row[0]] = {'place_id': row[1]}
+            else:
+                region_codes[row[0]] = {'place_id': row[1]}
+
 
 
 init_geo_codes()
 
 
-def get_geo_string(code):
+def get_place_id(code):
+    print code
     loc = region_codes[code]
-    return loc["lat"] + "," + loc["lng"] + ",250mi"
+    return loc["place_id"]
 
 
 @app.route('/')
@@ -39,16 +44,20 @@ def home_page():
 
 @app.route('/trending')
 def trending_topics():
-    return jsonify({'trending': api.find_trending()})
+    loc = request.args.get('loc')
+    if loc is not None:
+        return jsonify({'trending': api.find_trending(loc)})
+    else:
+        return jsonify({'trending': api.find_trending()})
 
 
 @app.route('/linearsvc')
 def predict_linear_svc():
     search_term = request.args.get('q')
     code = request.args.get('code')
-    geo = get_geo_string(code)
+    place_id = get_place_id(code)
 
-    return api.search_twitter(search_term, geo, code, 100, 400)
+    return api.search_twitter(search_term, place_id, code, 100, 400)
 
 
 app.secret_key = 'gg_secret_cw'

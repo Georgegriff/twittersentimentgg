@@ -19,14 +19,19 @@ var twitterApp = (function () {
     }
 
 
-    function init(options) {
+    function init() {
         self = this;
-        showTrendingData();
+        initCountries();
+        switchCountry(self.charting.getLocations().USA);
+        $('#trending-drop').find('select').change(function (e) {
+            var select = e.target,
+                location = select.options[e.target.selectedIndex].value;
+            switchCountry(location);
+        });
         self.charting.createPieChart('#pie-chart', results, function (chart) {
             pieChart = chart;
         });
         searchPressed();
-        self.charting.createWorldMap();
     }
 
 
@@ -47,14 +52,29 @@ var twitterApp = (function () {
         setPieResult(NEGATIVE, 50);
         if (val && val !== '') {
             streamResults(val)
-            $('#search-title').append(val);
+            $('#search-title #s-val').text(val);
         }
     }
 
 
+    function initCountries() {
+        var options = $('#trending-drop').find('select').get(0).options,
+            op, option;
+        for (op in options) {
+            if (options.hasOwnProperty(op)) {
+                option = options[op];
+                self.charting.setLocation(option.getAttribute("name"), option.getAttribute("value"));
+            }
+        }
+    }
+
+    function switchCountry(location) {
+        showTrendingData(location);
+        self.charting.switchMap(location);
+    }
+
     function onDataReceived(datas) {
         if (datas) {
-            console.log(datas);
             datas.forEach(function (value) {
                 var data = value.data,
                     result = data.result;
@@ -63,11 +83,9 @@ var twitterApp = (function () {
                 } else {
                     total_neg++;
                 }
-                 setPieResult(NEGATIVE, total_neg);
-                 setPieResult(POSITIVE, total_pos);
+                setPieResult(NEGATIVE, total_neg);
+                setPieResult(POSITIVE, total_pos);
                 self.charting.addResultToRegion(data.result, data.location);
-
-
             });
 
         }
@@ -84,13 +102,15 @@ var twitterApp = (function () {
 
     function queryAPI(query, code, onDataReceived) {
         var uri = '/linearsvc?q=' + query + "&code=" + code;
-        return ajax_stream(uri, onDataReceived)
+        return ajax_stream(encodeURI(uri).replace(/#/g, "%23"), onDataReceived)
     }
 
-    function showTrendingData() {
-        return $.getJSON('/trending')
+    function showTrendingData(location) {
+        var uri = location ? "/trending?loc=" + location : "/trending";
+        return $.getJSON(uri)
             .then(function (data) {
                 var trending = data && data.trending ? data.trending : [];
+                $('#tags').empty();
                 trending.forEach(function (hashtag) {
                     appendHashTag(hashtag);
                 });
@@ -100,7 +120,7 @@ var twitterApp = (function () {
 
 
     function appendHashTag(hash) {
-        var $trending = $('#trending-tags');
+        var $trending = $('#tags');
         $trending.append('<div class="trend">' + hash + '</div>');
     }
 
@@ -143,7 +163,7 @@ var twitterApp = (function () {
     }
 
     function setPieResult(index, value) {
-        results[index].value = value
+        results[index].value = value;
         pieChart.update();
     }
 
@@ -154,4 +174,5 @@ var twitterApp = (function () {
     return api;
 
 
-})();
+})
+();

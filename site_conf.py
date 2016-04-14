@@ -13,6 +13,7 @@ class SiteConfig:
                 'js/lib/nv.d3.min.js',
                 'js/lib/jquery-jvectormap-2.0.3.min.js',
                 'js/lib/jquery-jvectormap.js',
+                'js/lib/jquery-uk-jvectormap.js',
                 'js/main.js',
                 'js/charting.js',
                 output='gen/index.js'),

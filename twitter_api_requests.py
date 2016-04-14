@@ -1,6 +1,7 @@
 import tweepy
 from twitter_svm import TwitterSVM
 from flask import Response
+import urllib
 
 svm = TwitterSVM()
 
@@ -13,7 +14,7 @@ class TwitterAPI:
         self.api = tweepy.API(auth)
 
     def __init__(self):
-        self.cached_trends = []
+        self.cached_trends = {}
 
         self.accounts = [
             {
@@ -35,27 +36,30 @@ class TwitterAPI:
                 'access_token_secret': 'dNzTbpTd5DkFc1xfAMPKne59ZFLFMXEbYI8Iq9MbjjWeE',
             },
             {
-                'consumer_key': "g0r5v3qlbDVFt9iargHz0XsFT",
-                'consumer_secret': 'Y579ecpoMN5OQPymrrq1RaOxyH8ISHEzdcko4ogvASBybj8ltR',
-                'access_token': ' 719615862223826944-sP0vIwuWkLCEhq19KsV7a0BxUz1Xz31',
+                'consumer_key': "6yOblxv82jUfKiWJzRVWJE3K9",
+                'consumer_secret': 'fNUYmD2j0Di6XDJmQXOlaFYbakPPKHVwMNbKbCyywQQYnSgzAr',
+                'access_token': '719615862223826944-sP0vIwuWkLCEhq19KsV7a0BxUz1Xz31',
                 'access_token_secret': 'yPEhpfg0j77ZUfeo34PrmUAMomftkLzZjHAkyRu5qo3qR',
             }
         ]
         self.account_len = len(self.accounts)
 
-        self.select_acc(0)
+        self.select_acc(2)
 
         self.current_acc = 0
 
         self.fail_count = 0
 
-    def perform_search(self, max_id, query, geo, items):
+    def place_search(self, query, place):
+        return "%s place:%s" %(query,place)
+
+    def perform_search(self, max_id, query, place, items):
         tweet_list = []
         try:
             if max_id <= 0:
-                tweet_list = self.api.search(q=query, geocode=geo, lang='en', count=items)
+                tweet_list = self.api.search(q=self.place_search(query, place), lang='en', count=items)
             else:
-                tweet_list = self.api.search(q=query, geocode=geo, lang='en', count=items,
+                tweet_list = self.api.search(q=self.place_search(query, place), lang='en', count=items,
                                              max_id=str(max_id - 1))
         except tweepy.TweepError as e:
             print e
@@ -67,14 +71,14 @@ class TwitterAPI:
                 else:
                     self.current_acc += 1
                 self.select_acc(self.current_acc)
-                self.perform_search(max_id, query, geo, items)
+                self.perform_search(max_id, query, place, items)
             else:
                 print "Out of Accounts..."
                 self.fail_count = 0
                 tweet_list = []
         return tweet_list
 
-    def search_twitter(self, query='', geo='&geocode=37.781157%2C-122.398720%2C1mi', code='',
+    def search_twitter(self, query='', place='96683cc9126741d1', code='',
                        items=100, max_tweets=100):
 
         def events(code):
@@ -84,7 +88,7 @@ class TwitterAPI:
             is_done = False
             while searched_tweets < max_tweets and not (is_done):
                 before_size = searched_tweets
-                tweet_list = self.perform_search(max_id, query, geo, items)
+                tweet_list = self.perform_search(max_id, query, place, items)
                 if (searched_tweets + len(tweet_list) == before_size):
                     is_done = True
                 self.fail_count = 0
@@ -107,7 +111,18 @@ class TwitterAPI:
             data = trends1[0]
             trends = data['trends']
             names = [trend['name'] for trend in trends]
-            self.cached_trends = names
+            self.cached_trends[location] = names
         except tweepy.TweepError:
             print "Usage Cap Exceeded"
-        return self.cached_trends
+        if(location in self.cached_trends):
+            return self.cached_trends[location]
+        else:
+            return []
+
+    def lookup_places(self, q):
+        try:
+            places = self.api.geo_search(query="q", granularity="admin")
+            print "%s, %s" % (places[0].id, places[0].full_name)
+            return places
+        except tweepy.TweepError as e:
+            print e

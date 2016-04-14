@@ -1,6 +1,7 @@
 twitterApp.charting = (function () {
     var regionCodes = [],
         regionData = {},
+        locations = {},
         map;
 
     function createPieChart(elementSelector, results, listener) {
@@ -57,11 +58,11 @@ twitterApp.charting = (function () {
         return colors;
     }
 
-    function createWorldMap() {
+    function createMap(mapName) {
         var key;
         map = new jvm.Map({
-            map: 'us_aea',
-            container: $('#worldmap'),
+            map: mapName,
+            container: $('#map'),
             hoverOpacity: 0.7,
             series: {
                 regions: [{
@@ -94,9 +95,27 @@ twitterApp.charting = (function () {
         map.series.regions[0].setValues(recalculateColors());
     }
 
+    function switchMap(location) {
+        $('#map').empty();
+        regionCodes = [];
+        regionData = {};
+        switch (location) {
+
+            case locations.USA:
+                createMap('us_aea');
+                break;
+            case locations.UK:
+                createMap('uk_countries_mill');
+                break;
+
+            default:
+                break;
+        }
+    }
+
     var api = {
         createPieChart: createPieChart,
-        createWorldMap: createWorldMap,
+        createMap: createMap,
         getRegionCodes: function () {
             return regionCodes;
         },
@@ -105,7 +124,14 @@ twitterApp.charting = (function () {
                 regionData[key] = {"pos": 0, "neg": 0, "tot": 0};
             }
         },
-        addResultToRegion: addResultToRegion
+        addResultToRegion: addResultToRegion,
+        switchMap: switchMap,
+        setLocation: function (name, value) {
+            locations[name] = value;
+        },
+        getLocations: function () {
+            return locations;
+        }
 
     }
     return api;
