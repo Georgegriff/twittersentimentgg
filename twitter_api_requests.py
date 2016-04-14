@@ -51,15 +51,15 @@ class TwitterAPI:
         self.fail_count = 0
 
     def place_search(self, query, place):
-        return "%s place:%s" %(query,place)
+        return "%s place:%s" % (query, place)
 
-    def perform_search(self, max_id, query, place, items):
+    def perform_search(self, max_id, query, geo, items):
         tweet_list = []
         try:
             if max_id <= 0:
-                tweet_list = self.api.search(q=self.place_search(query, place), lang='en', count=items)
+                tweet_list = self.api.search(q=query, geocode=geo, lang='en', count=items)
             else:
-                tweet_list = self.api.search(q=self.place_search(query, place), lang='en', count=items,
+                tweet_list = self.api.search(q=query, geocode=geo, lang='en', count=items,
                                              max_id=str(max_id - 1))
         except tweepy.TweepError as e:
             print e
@@ -71,14 +71,14 @@ class TwitterAPI:
                 else:
                     self.current_acc += 1
                 self.select_acc(self.current_acc)
-                self.perform_search(max_id, query, place, items)
+                self.perform_search(max_id, query, geo, items)
             else:
                 print "Out of Accounts..."
                 self.fail_count = 0
                 tweet_list = []
         return tweet_list
 
-    def search_twitter(self, query='', place='96683cc9126741d1', code='',
+    def search_twitter(self, query='', geo='&geocode=37.781157%2C-122.398720%2C1mi', code='',
                        items=100, max_tweets=100):
 
         def events(code):
@@ -88,7 +88,7 @@ class TwitterAPI:
             is_done = False
             while searched_tweets < max_tweets and not (is_done):
                 before_size = searched_tweets
-                tweet_list = self.perform_search(max_id, query, place, items)
+                tweet_list = self.perform_search(max_id, query, geo, items)
                 if (searched_tweets + len(tweet_list) == before_size):
                     is_done = True
                 self.fail_count = 0
@@ -114,7 +114,7 @@ class TwitterAPI:
             self.cached_trends[location] = names
         except tweepy.TweepError:
             print "Usage Cap Exceeded"
-        if(location in self.cached_trends):
+        if (location in self.cached_trends):
             return self.cached_trends[location]
         else:
             return []

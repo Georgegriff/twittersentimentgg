@@ -572,7 +572,15 @@ html, body {
    outline: 0 none;
 
 }
- 
+.hash-link {
+    cursor:pointer;
+    color:#1da1f2;
+
+}
+.hash-link:hover{
+   color:black;
+
+}
 :root .dropdown option
 {
     background: #fff;

@@ -22,19 +22,17 @@ def init_geo_codes():
         filereader = csv.reader(csvfile, delimiter=',', quotechar='|')
         for row in filereader:
             if "USA" in row[3]:
-                region_codes["US-" + row[0]] = {'place_id': row[1]}
+                region_codes["US-" + row[0]] = {'lat': row[1], 'lng': row[2]}
             else:
-                region_codes[row[0]] = {'place_id': row[1]}
-
+                region_codes[row[0]] = {'lat': row[1], 'lng': row[2]}
 
 
 init_geo_codes()
 
 
-def get_place_id(code):
-    print code
+def get_geo_string(code):
     loc = region_codes[code]
-    return loc["place_id"]
+    return loc["lat"] + "," + loc["lng"] + ",250mi"
 
 
 @app.route('/')
@@ -55,7 +53,7 @@ def trending_topics():
 def predict_linear_svc():
     search_term = request.args.get('q')
     code = request.args.get('code')
-    place_id = get_place_id(code)
+    place_id = get_geo_string(code)
 
     return api.search_twitter(search_term, place_id, code, 100, 400)
 

@@ -139,14 +139,20 @@ var twitterApp = (function () {
                 trending.forEach(function (hashtag) {
                     appendHashTag(hashtag);
                 });
-
             })
     }
 
 
     function appendHashTag(hash) {
-        var $trending = $('#tags');
-        $trending.append('<div class="trend">' + hash + '</div>');
+        var $trending = $('#tags'),
+            $trend = $('<div class="trend"><a class="hash-link">' + hash + '</a></div>');
+        $trending.append($trend);
+        $trend.find('a').click(function(e){
+                    $('.search').find('input').val($(e.target).text());
+                     self.charting.resetRegionData();
+                    searchQuery();
+
+                });
     }
 
 
