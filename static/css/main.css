@@ -157,3 +157,12 @@ html, body {
 .jvectormap-container {
     background: transparent !important;
 }
+/** Mobile */
+@media screen and (max-width: 894px)and (orientation : portrait) {
+    #data {
+        flex-direction: column;
+    }
+    #results-areas {
+        flex:1;
+    }
+}
