@@ -437,9 +437,11 @@ html, body {
 .flex-left {
     justify-content: flex-start;
 }
+
 .sub {
-    font-size:75%;
+    font-size: 75%;
 }
+
 .flex-right {
     margin-left: auto;
 }
@@ -481,19 +483,24 @@ html, body {
     flex: 6;
     flex-direction: column;
     background: #f5f5f5;
+    margin: 0 auto;
+    text-align: center;
 }
-#res-info{
+
+#res-info {
     display: flex;
-    flex:3;
+    flex: 3;
     border-top: 1px solid white;
-    padding:1%;
+    padding: 1%;
     flex-direction: column;
 }
+
 #res-info div {
     padding-bottom: 10px;
-    font-size:110%;
+    font-size: 110%;
     font-weight: 600;
 }
+
 #config {
     display: flex;
     flex: 1;
@@ -516,49 +523,45 @@ html, body {
 }
 
 #data {
-    display:flex;
+    display: flex;
     flex-direction: row;
+    margin-bottom: 5px;
 }
 
+.dropdown {
+    width: 90%;
+}
 
+.dropdown select {
+    width: 100%;
+}
 
- .dropdown {
-     width:90%;
- }
- .dropdown select {
-     width:100%;
- }
 .dropdown option,
 .dropdown:after,
 .dropdown::after,
-.dropdown select
-{
+.dropdown select {
     color: #fff;
 }
- 
+
 :root .dropdown select,
 :root .dropdown:after,
-:root .dropdown::after
-{
+:root .dropdown::after {
     display: block;
     background: #aaaaaa;
 }
- 
+
 :root .dropdown select,
-:root .dropdown option
-{
+:root .dropdown option {
     padding: 8px;
 }
- 
-:root .dropdown
-{
+
+:root .dropdown {
     position: relative;
     display: inline-block;
     border: 0;
 }
- 
-:root .dropdown::after
-{
+
+:root .dropdown::after {
     content: "\25bc";
     position: absolute;
     top: 0;
@@ -568,78 +571,88 @@ html, body {
     font-size: 12px;
     line-height: 34px;
     text-align: center;
-     
+
     -webkit-pointer-events: none;
     -moz-pointer-events: none;
     pointer-events: none;
 }
- 
-:root .dropdown select
-{
-   height: 34px;
-   border: 0;
-   vertical-align: middle;
-   font: normal 12px/14px "Segoe UI", Arial, Helvetica, Sans-serif;
-   outline: 0 none;
+
+:root .dropdown select {
+    height: 34px;
+    border: 0;
+    vertical-align: middle;
+    font: normal 12px/14px "Segoe UI", Arial, Helvetica, Sans-serif;
+    outline: 0 none;
 
 }
+
 .hash-link {
-    cursor:pointer;
-    color:#1da1f2;
+    cursor: pointer;
+    color: #1da1f2;
 
 }
-.hash-link:hover{
-   color:black;
+
+.hash-link:hover {
+    color: black;
 
 }
-:root .dropdown option
-{
+
+:root .dropdown option {
     background: #fff;
     color: #333;
-     background: #add8e6;
+    background: #add8e6;
 }
 
 .jvectormap-container {
     background: transparent !important;
 }
+
 /** Mobile */
-@media screen and (max-width: 894px)and (orientation : portrait) {
+@media screen and (max-width: 894px)and (orientation: portrait) {
     #data {
         flex-direction: column;
     }
+
     #results-areas {
-        flex:1;
+        flex: 1;
     }
 }
+
 #config {
     align-content: center;
-    flex:0.5;
+    flex: 0.5;
 }
+
 .search, .small-drop {
-    display:flex;
+    display: flex;
 }
+
 .search {
-    flex:0;
-    margin-right:5px;
-    height:34px;
+    flex: 0;
+    margin-right: 5px;
+    height: 34px;
     display: flex;
     align-items: center;
 }
+
 .search input {
-    height:28px;
-    padding-left:5px;
+    height: 28px;
+    padding-left: 5px;
 }
+
 .search button {
-    color:white;
+    color: white;
     background-color: #aaaaaa;
-    height:36px;
-    border:solid 1px #f1f1f1;
+    height: 36px;
+    border: solid 1px #f1f1f1;
 }
+
 .small-drop {
-    flex:1;
-    max-width:200px;
-    margin-right:5px;
+    flex: 1;
+    max-width: 200px;
+    margin-right: 5px;
 }
+
 .info {
     font-size: 90%;
     font-weight: 600;
