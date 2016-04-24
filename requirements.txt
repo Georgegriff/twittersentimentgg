@@ -39,6 +39,7 @@ funcsigs==0.4
 gdbn==0.1
 gnumpy==0.2
 gunicorn==19.0.0
+gyp==0.1
 html5lib==0.999
 httplib2==0.9
 idna==2.0
@@ -102,5 +103,7 @@ virtualenv==1.11.6
 webassets==0.11.1
 wheel==0.26.0
 wsgiref==0.1.2
+wxPython==3.0.2.0
+wxPython-common==3.0.2.0
 xdiagnose==3.8.1
 zope.interface==4.1.2
