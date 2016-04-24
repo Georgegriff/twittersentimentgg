@@ -23,9 +23,16 @@
     </header>
     <section id="content">
         <div id="config">
-            <div class=search><input placeholder="Search">
+            <div class="search"><input placeholder="Search">
                 <button>Go</button>
             </div>
+             <span id="algorithm-drop" class="dropdown small-drop">
+                    <select name="algorithm">
+                        <option name="linearsvc" value="linearsvc">Linear SVC (SVM)</option>
+                        <option name="bayes" value="bayes">Naive Bayes Classifier</option>
+                    </select>
+            </span>
+            <span><label class="info">Algorithm Testing Accuracy:<span class="accuracy"></span>%</label></span>
         </div>
         <div class="cont-container">
             <div id="results-areas">
@@ -37,6 +44,17 @@
                         <svg id="pie-chart"></svg>
                     </div>
                     <div id="map" style="width: 640px; height: 480px"></div>
+                </div>
+                <div id="res-info">
+                    <div class="t-tweets">
+                        Total Tweets: <span>0</span>
+                    </div>
+                      <div class="p-tweets">
+                        Positive Tweets: <span>0</span>
+                    </div>
+                      <div class="n-tweets">
+                        Negative Tweets: <span>0</span>
+                    </div>
                 </div>
             </div>
             <div id="trending-tags">

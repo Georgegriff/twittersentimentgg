@@ -53,6 +53,13 @@ var twitterApp = (function () {
                 location = select.options[e.target.selectedIndex].value;
             switchCountry(location);
         });
+        var drop = $('#algorithm-drop').find('select').get(0);
+        getAccuracy(drop.options[drop.selectedIndex].value);
+        $('#algorithm-drop').find('select').change(function (e) {
+            var select = e.target,
+                algorithm = select.options[e.target.selectedIndex].value;
+            getAccuracy(algorithm);
+        });
         self.charting.createPieChart('#pie-chart', results, function (chart) {
             pieChart = chart;
         });
@@ -111,6 +118,7 @@ var twitterApp = (function () {
                 setPieResult(NEGATIVE, total_neg);
                 setPieResult(POSITIVE, total_pos);
                 self.charting.addResultToRegion(data.result, data.location);
+                updateInfo();
             });
 
         }
@@ -126,7 +134,9 @@ var twitterApp = (function () {
 
 
     function queryAPI(query, code, onDataReceived) {
-        var uri = '/linearsvc?q=' + query + "&code=" + code;
+        var drop = $('#algorithm-drop').find('select').get(0),
+            algorithm = drop.options[drop.selectedIndex].value,
+            uri = '/' + algorithm + '?q=' + query + "&code=" + code;
         return ajax_stream(encodeURI(uri).replace(/#/g, "%23"), onDataReceived)
     }
 
@@ -147,12 +157,19 @@ var twitterApp = (function () {
         var $trending = $('#tags'),
             $trend = $('<div class="trend"><a class="hash-link">' + hash + '</a></div>');
         $trending.append($trend);
-        $trend.find('a').click(function(e){
-                    $('.search').find('input').val($(e.target).text());
-                     self.charting.resetRegionData();
-                    searchQuery();
+        $trend.find('a').click(function (e) {
+            $('.search').find('input').val($(e.target).text());
+            self.charting.resetRegionData();
+            searchQuery();
 
-                });
+        });
+    }
+
+    function updateInfo() {
+        var $resultInfo = $('#res-info');
+        $resultInfo.find('.t-tweets span').html(total_neg + total_pos);
+        $resultInfo.find('.p-tweets span').html(total_pos);
+        $resultInfo.find('.n-tweets span').html(total_neg);
     }
 
 
@@ -196,6 +213,13 @@ var twitterApp = (function () {
     function setPieResult(index, value) {
         results[index].value = value;
         pieChart.update();
+    }
+
+    function getAccuracy(algorithm) {
+        $.getJSON('/accuracy?algorithm=' + algorithm)
+            .then(function (data) {
+                $('#config').find('.info .accuracy').html(data && data.accuracy ? Math.floor(data.accuracy * 100) / 100 : '');
+            })
     }
 
     var api = {
@@ -281,6 +305,11 @@ twitterApp.charting = (function () {
             regionStyle: {
                 initial: {
                     fill: '#AEC7E8'
+                }
+            },
+            onRegionTipShow: function (e, el, code) {
+                if(regionData && regionData[code]){
+                     el.html(el.html()+ (', Total:' + regionData[code].tot || ''));
                 }
             }
         });

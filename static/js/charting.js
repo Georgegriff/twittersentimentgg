@@ -73,6 +73,11 @@ twitterApp.charting = (function () {
                 initial: {
                     fill: '#AEC7E8'
                 }
+            },
+            onRegionTipShow: function (e, el, code) {
+                if(regionData && regionData[code]){
+                     el.html(el.html()+ (', Total:' + regionData[code].tot || ''));
+                }
             }
         });
         for (key in map.regions) {

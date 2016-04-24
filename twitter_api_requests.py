@@ -1,9 +1,8 @@
 import tweepy
-from twitter_svm import TwitterSVM
+
 from flask import Response
 import urllib
 
-svm = TwitterSVM()
 
 
 class TwitterAPI:
@@ -13,7 +12,7 @@ class TwitterAPI:
         auth.set_access_token(acc["access_token"], acc["access_token_secret"])
         self.api = tweepy.API(auth)
 
-    def __init__(self):
+    def __init__(self, svm, bayes):
         self.cached_trends = {}
 
         self.accounts = [
@@ -49,6 +48,8 @@ class TwitterAPI:
         self.current_acc = 0
 
         self.fail_count = 0
+        self.svm = svm
+        self.bayes = bayes
 
     def place_search(self, query, place):
         return "%s place:%s" % (query, place)
@@ -78,7 +79,7 @@ class TwitterAPI:
                 tweet_list = []
         return tweet_list
 
-    def search_twitter(self, query='', geo='&geocode=37.781157%2C-122.398720%2C1mi', code='',
+    def search_twitter(self, algorithm='linearsvc',query='', geo='&geocode=37.781157%2C-122.398720%2C1mi', code='',
                        items=100, max_tweets=100):
 
         def events(code):
@@ -99,7 +100,12 @@ class TwitterAPI:
 
                 print "Tweet total: %s" % (searched_tweets)
                 for tweet in tweet_list:
-                    results = svm.predict([tweet.text])
+                    if algorithm == 'linearsvc':
+                        results = self.svm.predict([tweet.text])
+                    elif algorithm == 'bayes':
+                        results = self.bayes.predict([tweet.text])
+                    else:
+                        results = self.svm.predict([tweet.text])
                     yield '{"data":{"result": %s, "location":"%s" }}' % (results[0], code)
                     yield ','
 

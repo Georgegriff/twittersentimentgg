@@ -482,7 +482,18 @@ html, body {
     flex-direction: column;
     background: #f5f5f5;
 }
-
+#res-info{
+    display: flex;
+    flex:3;
+    border-top: 1px solid white;
+    padding:1%;
+    flex-direction: column;
+}
+#res-info div {
+    padding-bottom: 10px;
+    font-size:110%;
+    font-weight: 600;
+}
 #config {
     display: flex;
     flex: 1;
@@ -600,6 +611,40 @@ html, body {
         flex:1;
     }
 }
+#config {
+    align-content: center;
+    flex:0.5;
+}
+.search, .small-drop {
+    display:flex;
+}
+.search {
+    flex:0;
+    margin-right:5px;
+    height:34px;
+    display: flex;
+    align-items: center;
+}
+.search input {
+    height:28px;
+    padding-left:5px;
+}
+.search button {
+    color:white;
+    background-color: #aaaaaa;
+    height:36px;
+    border:solid 1px #f1f1f1;
+}
+.small-drop {
+    flex:1;
+    max-width:200px;
+    margin-right:5px;
+}
+.info {
+    font-size: 90%;
+    font-weight: 600;
+}
+
 svg {
     touch-action: none;
 }

@@ -1,17 +1,19 @@
 from flask import Flask, render_template, request, jsonify, json, Response, redirect, url_for
 from twitter_api_requests import TwitterAPI
+from twitter_svm import TwitterSVM
+from twitter_naive_bay import TwitterBayes
 
-import time
-import itertools
 
 app = Flask(__name__)
+svm = TwitterSVM()
+bay = TwitterBayes()
 -app.config.from_pyfile('flaskapp.cfg')
 from site_conf import SiteConfig
 import os
 import csv
 
 SiteConfig(app)
-api = TwitterAPI()
+api = TwitterAPI(svm, bay)
 
 region_codes = {}
 
@@ -55,7 +57,26 @@ def predict_linear_svc():
     code = request.args.get('code')
     place_id = get_geo_string(code)
 
-    return api.search_twitter(search_term, place_id, code, 100, 400)
+    return api.search_twitter('linearsvc',search_term, place_id, code, 100, 400)
+
+@app.route('/bayes')
+def predict_bayes():
+    search_term = request.args.get('q')
+    code = request.args.get('code')
+    place_id = get_geo_string(code)
+
+    return api.search_twitter('bayes',search_term, place_id, code, 100, 400)
+
+@app.route('/accuracy')
+def accuracy_al():
+    algorithm = request.args.get('algorithm')
+    output = {'accuracy' : 0}
+    if algorithm == "linearsvc":
+      output['accuracy'] = svm.calculate_accuracy()
+    elif algorithm == "bayes":
+        output['accuracy'] = bay.calculate_accuracy()
+
+    return jsonify(output)
 
 
 app.secret_key = 'gg_secret_cw'
