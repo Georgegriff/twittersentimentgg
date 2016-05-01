@@ -32,18 +32,19 @@
                         <option name="bayes" value="bayes">Naive Bayes Classifier</option>
                     </select>
             </span>
-            <span><label class="info">Algorithm Testing Accuracy:<span class="accuracy"></span>%</label></span>
+            <span style="flex: 1;display: flex;"><label class="info">Algorithm Testing Accuracy:<span class="accuracy"></span>%</label></span>
+            <span id="menu-btn" class="menu">View Trending Tags</span>
         </div>
         <div class="cont-container">
             <div id="results-areas">
                 <div id="title-bar">
-                    <h3 id="search-title">Showing Results For: <span id="s-val"></span></h3>
+                    <h3 id="search-title">Showing Results For: <span id="s-val"></span><span style="display:none;" class="spin">&#8635;</span></h3>
                 </div>
                 <div id="data">
                     <div id="graphs">
                         <svg id="pie-chart"></svg>
                     </div>
-                    <div id="map" style="width: 640px; height: 480px"></div>
+                    <div id="map" style="width: 520px; height: 400px"></div>
                 </div>
                 <div id="res-info">
                     <div class="t-tweets">

@@ -9,6 +9,7 @@ class SiteConfig:
 
             'js': Bundle(
                 'js/lib/jquery.min.js',
+                'js/lib/jquery-ui.min.js',
                 'js/lib/d3.v3.min.js',
                 'js/lib/nv.d3.min.js',
                 'js/lib/jquery-jvectormap-2.0.3.min.js',

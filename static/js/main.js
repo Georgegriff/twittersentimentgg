@@ -39,6 +39,7 @@ var twitterApp = (function () {
             pieChart = chart;
         });
         searchPressed();
+        slideSide();
     }
 
 
@@ -51,6 +52,7 @@ var twitterApp = (function () {
     }
 
     function searchQuery() {
+        $('.spin').show();
         var $search = $('.search'),
             val = $search.find('input').val();
         total_neg = 0;
@@ -80,30 +82,28 @@ var twitterApp = (function () {
         self.charting.switchMap(location);
     }
 
-    function onDataReceived(datas) {
-        if (datas) {
-            datas.forEach(function (value) {
-                var data = value.data,
-                    result = data.result;
-                if (result === 1) {
-                    total_pos++;
-                } else {
-                    total_neg++;
-                }
-                setPieResult(NEGATIVE, total_neg);
-                setPieResult(POSITIVE, total_pos);
-                self.charting.addResultToRegion(data.result, data.location);
-                updateInfo();
-            });
+    function onDataReceived(data) {
+        if (data) {
+            total_pos += isNaN(data.positive) ? 0 : data.positive;
+            total_neg += isNaN(data.negative) ? 0 : data.negative;
+            setPieResult(NEGATIVE, total_neg);
+            setPieResult(POSITIVE, total_pos);
+            self.charting.addResultToRegion(data.positive, data.negative, data.location);
+            updateInfo();
 
         }
     }
 
     function streamResults(query) {
-        var codes = self.charting.getRegionCodes();
+        var codes = self.charting.getRegionCodes(),
+            promises = [];
         codes.forEach(function (code) {
-            queryAPI(query, code, onDataReceived);
-        })
+            promises.push(queryAPI(query, code, onDataReceived));
+        });
+        $.when.apply($, promises)
+            .then(function () {
+                $('.spin').hide();
+            })
 
     }
 
@@ -112,7 +112,7 @@ var twitterApp = (function () {
         var drop = $('#algorithm-drop').find('select').get(0),
             algorithm = drop.options[drop.selectedIndex].value,
             uri = '/' + algorithm + '?q=' + query + "&code=" + code;
-        return ajax_stream(encodeURI(uri).replace(/#/g, "%23"), onDataReceived)
+        return getTweets(encodeURI(uri).replace(/#/g, "%23"), onDataReceived)
     }
 
     function showTrendingData(location) {
@@ -148,46 +148,43 @@ var twitterApp = (function () {
     }
 
 
-    function ajax_stream(uri, onDataReceived) {
-        try {
-            var xhr = new XMLHttpRequest();
-            xhr.previous_text = '';
+    function getTweets(uri, onDataReceived) {
+        return $.getJSON(uri).done(function (data) {
+            if (data && data.data) {
+                return onDataReceived(data.data);
+            }
 
-            xhr.onerror = function () {
-                console.log("XHR Error");
-            };
-            xhr.onreadystatechange = function () {
-                try {
-                    if (xhr.readyState > 2) {
-                        var response = xhr.responseText.substring(xhr.previous_text.length);
-                        if (response.endsWith(",")) {
-                            response = response.slice(0, -1);
-                        }
-                        if (response.startsWith(",")) {
-                            response = response.slice(1);
-                        }
-                        var result = JSON.parse("[" + response + "]");
-                        onDataReceived(result);
-                        xhr.previous_text = xhr.responseText;
-                    }
-                }
-                catch (e) {
-                    console.log(e);
-                }
-
-
-            };
-            xhr.open("GET", uri, true);
-            xhr.send("Making request...");
-        }
-        catch (e) {
-            log_message("<b>[XHR] Exception: " + e + "</b>");
-        }
+        });
     }
 
     function setPieResult(index, value) {
         results[index].value = value;
         pieChart.update();
+    }
+
+
+    function slideSide() {
+        var $tags = $('#trending-tags');
+        if ($('body').width() < 1300) {
+            $tags.hide();
+        }
+        $(window).resize(function () {
+            if ($('body').width() < 1300) {
+                $tags.hide("slide", {direction: "right"}, 600);
+                $('#data').css({"text-align": "center", "margin": "0 auto"});
+            } else {
+                $tags.show("slide", {direction: "right"}, 600);
+                $('#data').css({"text-align": "left", "margin": "0"});
+            }
+        });
+        $('#menu-btn').click(function () {
+            if ($tags.is(":visible")) {
+                $tags.toggle("slide", {direction: "right"}, 600);
+            } else {
+                $tags.toggle("slide", {direction: "right"}, 600);
+            }
+        });
+
     }
 
     function getAccuracy(algorithm) {

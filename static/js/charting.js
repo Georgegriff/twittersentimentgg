@@ -75,8 +75,8 @@ twitterApp.charting = (function () {
                 }
             },
             onRegionTipShow: function (e, el, code) {
-                if(regionData && regionData[code]){
-                     el.html(el.html()+ (', Total:' + regionData[code].tot || ''));
+                if (regionData && regionData[code]) {
+                    el.html(el.html() + (', Total:' + regionData[code].tot || ''));
                 }
             }
         });
@@ -86,15 +86,12 @@ twitterApp.charting = (function () {
         }
     }
 
-    function addResultToRegion(result, location) {
+    function addResultToRegion(pos, neg, location) {
         var region = regionData[location];
         if (region) {
-            if (result === 1) {
-                region.pos += 1;
-            } else {
-                region.neg += 1;
-            }
-            region.tot++;
+                region.pos += pos;
+                region.neg += neg;
+                region.tot  = region.pos + region.neg;
 
         }
         map.series.regions[0].setValues(recalculateColors());

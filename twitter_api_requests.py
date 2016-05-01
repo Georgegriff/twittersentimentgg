@@ -1,8 +1,9 @@
 import tweepy
 
-from flask import Response
+from flask import Response, jsonify, json
 import urllib
 
+from flask.json import jsonify
 
 
 class TwitterAPI:
@@ -79,37 +80,44 @@ class TwitterAPI:
                 tweet_list = []
         return tweet_list
 
-    def search_twitter(self, algorithm='linearsvc',query='', geo='&geocode=37.781157%2C-122.398720%2C1mi', code='',
+    def search_twitter(self, algorithm='linearsvc', query='', geo='&geocode=37.781157%2C-122.398720%2C1mi', code='',
                        items=100, max_tweets=100):
 
-        def events(code):
-            tweet_list = []
-            searched_tweets = 0
-            max_id = 0
-            is_done = False
-            while searched_tweets < max_tweets and not (is_done):
-                before_size = searched_tweets
-                tweet_list = self.perform_search(max_id, query, geo, items)
-                if (searched_tweets + len(tweet_list) == before_size):
-                    is_done = True
-                self.fail_count = 0
-                searched_tweets += len(tweet_list)
-                # update the last tweet
-                if len(tweet_list) > 0:
-                    max_id = tweet_list[-1].id
+        tweet_list = []
+        searched_tweets = 0
+        max_id = 0
+        output = {'data': []}
+        is_done = False
+        pos = 0
+        neg = 0
+        tot = 0
+        while searched_tweets < max_tweets and not (is_done):
+            before_size = searched_tweets
+            tweet_list = self.perform_search(max_id, query, geo, items)
+            if (searched_tweets + len(tweet_list) == before_size):
+                is_done = True
+            self.fail_count = 0
+            searched_tweets += len(tweet_list)
+            # update the last tweet
+            if len(tweet_list) > 0:
+                max_id = tweet_list[-1].id
 
-                print "Tweet total: %s" % (searched_tweets)
-                for tweet in tweet_list:
-                    if algorithm == 'linearsvc':
-                        results = self.svm.predict([tweet.text])
-                    elif algorithm == 'bayes':
-                        results = self.bayes.predict([tweet.text])
-                    else:
-                        results = self.svm.predict([tweet.text])
-                    yield '{"data":{"result": %s, "location":"%s" }}' % (results[0], code)
-                    yield ','
+            print "Tweet total: %s" % (searched_tweets)
+            tot += len(tweet_list)
+            for tweet in tweet_list:
+                if algorithm == 'linearsvc':
+                    results = self.svm.predict([tweet.text])
 
-        return Response(events(code), mimetype='application/json')
+                elif algorithm == 'bayes':
+                    results = self.bayes.predict([tweet.text])
+                else:
+                    results = self.svm.predict([tweet.text])
+                if results[0] == 1:
+                    pos += 1
+                elif results[0] == 0:
+                    neg += 1
+        output['data'] = {"positive": pos, "negative": neg, "location": code}
+        return jsonify(output)
 
     def find_trending(self, location=23424977):
         try:
