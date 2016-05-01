@@ -2,11 +2,17 @@ twitterApp.charting = (function () {
     var regionCodes = [],
         regionData = {},
         locations = {},
-        map;
+        map,
+        colourPalette = ['#e51e00', '#e54c00', '#e57b00', '#e5a900',
+            '#e5d700', '#c4e500', '#96e500', '#67e500', '#0ae600'];
 
     function createPieChart(elementSelector, results, listener) {
         var chart;
         nv.addGraph(function () {
+            var myColors = [colourPalette[0], colourPalette[colourPalette.length -1]];
+            d3.scale.myColors = function () {
+                return d3.scale.ordinal().range(myColors);
+            };
             var width = 600,
                 height = 400;
             chart = nv.models.pieChart()
@@ -16,7 +22,7 @@ twitterApp.charting = (function () {
                 .y(function (d) {
                     return d.value
                 })
-                .showLabels(true)     //Display pie labels
+                .showLabels(true).color(d3.scale.myColors().range())
                 .labelThreshold(.05)  //Configure the minimum slice size for labels to show up
                 .labelType("percent")
                 .width(width)
@@ -35,14 +41,13 @@ twitterApp.charting = (function () {
     }
 
     function calcColor(percentage) {
-        var colourPalette = ['#e51e00', '#e54c00', '#e57b00', '#e5a900',
-                '#e5d700', '#c4e500', '#96e500', '#67e500', '#39e500', '#0ae600'],
-            totalColors = colourPalette.length,
+
+        var totalColors = colourPalette.length,
             color = Math.floor(totalColors * percentage) - 1;
         if (color < 0) {
             color = 0;
         }
-        return colourPalette[color] || "#AEC7E8";
+        return colourPalette[color] || "#1da1f2";
 
     }
 
@@ -71,7 +76,7 @@ twitterApp.charting = (function () {
             },
             regionStyle: {
                 initial: {
-                    fill: '#AEC7E8'
+                    fill: '#1da1f2'
                 }
             },
             onRegionTipShow: function (e, el, code) {
@@ -89,9 +94,9 @@ twitterApp.charting = (function () {
     function addResultToRegion(pos, neg, location) {
         var region = regionData[location];
         if (region) {
-                region.pos += pos;
-                region.neg += neg;
-                region.tot  = region.pos + region.neg;
+            region.pos += pos;
+            region.neg += neg;
+            region.tot = region.pos + region.neg;
 
         }
         map.series.regions[0].setValues(recalculateColors());
@@ -133,6 +138,9 @@ twitterApp.charting = (function () {
         },
         getLocations: function () {
             return locations;
+        },
+        getColors: function () {
+            return colourPalette;
         }
 
     }

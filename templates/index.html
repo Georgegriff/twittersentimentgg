@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=0.5, user-scalable=0"/> <!--320-->
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=0.5, user-scalable=0"/>
+    <!--320-->
     <meta name="application-name" content="TwitterGG"/>
     <meta name="description" content=""/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -32,29 +33,37 @@
                         <option name="bayes" value="bayes">Naive Bayes Classifier</option>
                     </select>
             </span>
-            <span style="flex: 1;display: flex;"><label class="info">Algorithm Testing Accuracy:<span class="accuracy"></span>%</label></span>
+            <span style="flex: 1;display: flex;"><label class="info">Algorithm Testing Accuracy:<span
+                    class="accuracy"></span>%</label></span>
             <span id="menu-btn" class="menu">View Trending Tags</span>
         </div>
         <div class="cont-container">
             <div id="results-areas">
                 <div id="title-bar">
-                    <h3 id="search-title">Showing Results For: <span id="s-val"></span><span style="display:none;" class="spin">&#8635;</span></h3>
+                    <h3 id="search-title">Showing Results For: <span id="s-val"></span><span style="display:none;"
+                                                                                             class="spin">&#8635;</span>
+                    </h3>
                 </div>
                 <div id="data">
                     <div id="graphs">
                         <svg id="pie-chart"></svg>
                     </div>
-                    <div id="map" style="width: 520px; height: 400px"></div>
+                    <div id="map" style="width: 520px; height: 400px">
+                    </div>
+
                 </div>
                 <div id="res-info">
                     <div class="t-tweets">
                         Total Tweets: <span>0</span>
                     </div>
-                      <div class="p-tweets">
+                    <div class="p-tweets">
                         Positive Tweets: <span>0</span>
                     </div>
-                      <div class="n-tweets">
+                    <div class="n-tweets">
                         Negative Tweets: <span>0</span>
+                    </div>
+                    <div id="colors">
+
                     </div>
                 </div>
             </div>

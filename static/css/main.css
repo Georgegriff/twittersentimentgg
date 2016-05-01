@@ -280,3 +280,16 @@ html, body {
         -webkit-transform: rotate(360deg);
     }
 }
+#colors {
+
+}
+.color-block {
+    background:red;
+    display:inline-block;
+    color:white;
+    padding:2px;
+    font-size: 15px !important;
+    vertical-align: middle;
+    height:75px;
+    width:75px;
+}

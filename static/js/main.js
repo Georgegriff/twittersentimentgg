@@ -40,8 +40,27 @@ var twitterApp = (function () {
         });
         searchPressed();
         slideSide();
+        drawColours(self.charting.getColors());
     }
 
+    function drawColours(colors) {
+        var $colours = $('#colors'),
+            index = 0,
+            text = '',
+            $color = null;
+        colors.forEach(function (color) {
+            text = '';
+            if (index === 0) {
+                text = "Negative";
+            } else if (index === colors.length - 1) {
+                text = "Positive";
+            }
+            $color = $('<div class="color-block">' + text + '</div>');
+            $color.css({"background": color});
+            $colours.append($color);
+            index++;
+        });
+    }
 
     function searchPressed() {
         $('.search').find('button').click(function () {
