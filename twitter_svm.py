@@ -2,21 +2,23 @@ import read_data
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import svm
 import numpy as np
+from preprocessing import TweetProcessing
 
 
 class TwitterSVM:
     def __init__(self):
+        self.preprocessing = TweetProcessing()
         try:
             self.svc_classifier, self.tfidf = read_data.load_pickle("./svm.pickle")
         except:
             stop_words = ['a', 'the', 'and', 'of', 'or', 'then', 'an']
             pattern = '(?u)\\b[A-Za-z]{3,}'
-            self.tfidf = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words=stop_words, token_pattern=pattern,
+            self.tfidf = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words=None, token_pattern=pattern,
                                          ngram_range=(1, 3))
             # read the training_data data
             training_tweets, training_labels = read_data.read_training_data("./training_data/negative",
                                                                             "./training_data/positive")
-
+            training_tweets = self.preprocessing.preprocess_tweets(training_tweets)
             training_matrix = self.tfidf.fit_transform(training_tweets)
             self.svc_classifier = svm.LinearSVC()
             self.svc_classifier.fit(training_matrix, training_labels)
@@ -25,6 +27,10 @@ class TwitterSVM:
     def calculate_accuracy(self):
         pos_testing, pos_testing_labels = read_data.read_testing_data("./test_data/positive", False)
         neg_testing, neg_testing_labels = read_data.read_testing_data("./test_data/negative", True)
+
+        # PreProcess
+        pos_testing = self.preprocessing.preprocess_tweets(pos_testing)
+        neg_testing = self.preprocessing.preprocess_tweets(neg_testing)
 
         # Testing Features
 
@@ -46,3 +52,7 @@ class TwitterSVM:
     def predict(self, tweets):
         features = self.tfidf.transform(tweets)
         return self.svc_classifier.predict(features)
+
+
+svm = TwitterSVM()
+print svm.calculate_accuracy()

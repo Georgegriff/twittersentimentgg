@@ -265,8 +265,8 @@ twitterApp.charting = (function () {
         regionData = {},
         locations = {},
         map,
-        colourPalette = ['#e51e00', '#e54c00', '#e57b00', '#e5a900',
-            '#e5d700', '#c4e500', '#96e500', '#67e500', '#0ae600'];
+        colourPalette = ['#e51e00', '#e57b00', '#e5a900',
+            '#e5d700', '#c4e500', '#96e500', '#0ae600'];
 
     function createPieChart(elementSelector, results, listener) {
         var chart;

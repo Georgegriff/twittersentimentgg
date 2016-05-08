@@ -56,3 +56,5 @@ class TwitterBayes:
         counts = self.c_vect.transform(tweets)
         features = self.tfidf.transform(counts)
         return self.mnb_classifier.predict(features)
+svm = TwitterBayes()
+print svm.calculate_accuracy()
