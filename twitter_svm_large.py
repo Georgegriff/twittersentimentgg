@@ -19,7 +19,7 @@ class TwitterSVM:
 
 
 
-            training_tweets, training_labels = read_data.read_csv_training_data("./large_training.csv")
+            training_tweets, training_labels = read_data.read_csv_training_data("./large_training.csv", 100000)
 
             training_tweets = self.preprocessing.preprocess_tweets(training_tweets)
             training_matrix = self.tfidf.fit_transform(training_tweets)

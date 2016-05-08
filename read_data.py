@@ -21,7 +21,7 @@ def load_pickle(file_path):
 	return pickle.load(open(os.path.join(os.path.dirname(__file__), file_path), "rb"))
 
 
-def read_csv_training_data(path):
+def read_csv_training_data(path, ammount):
 	file_path = os.path.join(os.path.dirname(__file__), path)
 	with open(file_path, 'rb') as csvfile:
 		filereader = csv.reader(csvfile, delimiter=',', quotechar='|')
