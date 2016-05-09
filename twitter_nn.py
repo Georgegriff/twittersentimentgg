@@ -4,25 +4,33 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 from ffnet import ffnet, tmlgraph, savenet, loadnet
 import time
+from preprocessing import TweetProcessing
 
+preprocessing = TweetProcessing()
+training_tweets = []
+training_labels = []
 try:
-    tfidf = read_data.load_pickle("./nn.pickle")
+    tfidf = read_data.load_pickle("./nn_20k_1gram.pickle")
 except:
     stop_words = ['a', 'the', 'and', 'of', 'or', 'then', 'an']
-    pattern = '(?u)\\b[A-Za-z]{3,}'
+    pattern = '(?u)\\b[A-Za-z]{2,}'
 
     tfidf = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words=stop_words, token_pattern=pattern,
-                            ngram_range=(1, 3))
+                            ngram_range=(1, 2))
     # read the training_data data
     training_tweets, training_labels = read_data.read_training_data("./training_data/negative",
                                                                     "./training_data/positive")
 
+    training_tweets, training_labels = read_data.read_csv_training_data_two("./train_200000.csv", 5000)
+
+    training_tweets = preprocessing.preprocess_tweets(training_tweets)
+
     tfidf.fit(training_tweets)
 
 
-    read_data.pickle_data(tfidf, './nn.pickle')
+    read_data.pickle_data(tfidf, './nn_20k_1gram.pickle')
 try:
-    nnet = loadnet("trained_nn.network")
+    nnet = loadnet("nn_20k_1gram.network")
 
 except:
     features = tfidf.get_feature_names()
@@ -49,13 +57,18 @@ except:
     t5 = time.time()
     nn_train_time = t5 - t4
 
-    savenet(nnet, "trained_nn.network")
+    savenet(nnet, "nn_20k_1gram.network")
 
     output, regression = nnet.test(input_data, training_labels, iprint=2)
     print 'Time it took to train the neural network: ' + str(nn_train_time) + ' seconds.'
 
 pos_testing, pos_testing_labels = read_data.read_testing_data("./test_data/positive", False)
 neg_testing, neg_testing_labels = read_data.read_testing_data("./test_data/negative", True)
+
+pos_testing = preprocessing.preprocess_tweets(pos_testing)
+neg_testing = preprocessing.preprocess_tweets(neg_testing)
+
+
 number_of_features = len(tfidf.get_feature_names())
 testing_data = pos_testing + neg_testing
 testing_labels = pos_testing_labels + neg_testing_labels

@@ -13,7 +13,7 @@ class TwitterSVM:
         except:
             stop_words = ['a', 'the', 'and', 'of', 'or', 'then', 'an']
             pattern = '(?u)\\b[A-Za-z]{3,}'
-            self.tfidf = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words=None, token_pattern=pattern,
+            self.tfidf = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words=stop_words, token_pattern=pattern,
                                          ngram_range=(1, 3))
             # read the training_data data
             training_tweets, training_labels = read_data.read_training_data("./training_data/negative",
@@ -28,10 +28,13 @@ class TwitterSVM:
         pos_testing, pos_testing_labels = read_data.read_testing_data("./test_data/positive", False)
         neg_testing, neg_testing_labels = read_data.read_testing_data("./test_data/negative", True)
 
-        # PreProcess
-        pos_testing = self.preprocessing.preprocess_tweets(pos_testing)
-        neg_testing = self.preprocessing.preprocess_tweets(neg_testing)
+        #pos_testing, pos_testing_labels, neg_testing, neg_testing_labels = read_data.read_csv_testing_data("./large_testing.csv", False);
 
+        # PreProcess
+        #pos_testing = self.preprocessing.preprocess_tweets(pos_testing)
+        #neg_testing = self.preprocessing.preprocess_tweets(neg_testing)
+        pos_testing, pos_testing_labels, neg_testing, neg_testing_labels = read_data.read_csv_testing_data("./large_testing.csv", 10000);
+        print "Totals: %s" % (pos_testing.__len__() + neg_testing.__len__())
         # Testing Features
 
         results_negative = self.predict(neg_testing)

@@ -2,20 +2,25 @@ import read_data
 from sklearn.feature_extraction.text import TfidfTransformer, CountVectorizer
 import numpy as np
 from sklearn.naive_bayes import MultinomialNB
-
+from preprocessing import TweetProcessing
 
 class TwitterBayes:
     def __init__(self):
+        self.preprocessing = TweetProcessing()
         try:
-            self.c_vect, self.tfidf, self.mnb_classifier = read_data.load_pickle("./bayes.pickle")
+            self.c_vect, self.tfidf, self.mnb_classifier = read_data.load_pickle("./bayes_175k.pickle")
         except:
             stop_words = ['a', 'the', 'and', 'of', 'or', 'then', 'an']
             pattern = '(?u)\\b[A-Za-z]{3,}'
             self.c_vect = CountVectorizer(stop_words=stop_words, max_df=0.5, token_pattern=pattern, ngram_range=(1, 3))
 
             # read the training_data data
-            training_tweets, training_labels = read_data.read_training_data("./training_data/negative",
-                                                                            "./training_data/positive")
+            #training_tweets, training_labels = read_data.read_training_data("./training_data/negative",
+                                                                           # "./training_data/positive")
+
+
+            training_tweets, training_labels = read_data.read_csv_training_data_two("./train_200000.csv", 175000)
+            training_tweets = self.preprocessing.preprocess_tweets(training_tweets)
 
             training_counts = self.c_vect.fit_transform(training_tweets)
             self.tfidf = TfidfTransformer(sublinear_tf=True)
@@ -23,12 +28,15 @@ class TwitterBayes:
             self.mnb_classifier = MultinomialNB()
             self.mnb_classifier.fit(train_tf, training_labels)
 
-            read_data.pickle_data([self.c_vect, self.tfidf, self.mnb_classifier], './bayes.pickle')
+            read_data.pickle_data([self.c_vect, self.tfidf, self.mnb_classifier], './bayes_175k.pickle')
 
     def calculate_accuracy(self):
 
         pos_testing, pos_testing_labels = read_data.read_testing_data("./test_data/positive", False)
         neg_testing, neg_testing_labels = read_data.read_testing_data("./test_data/negative", True)
+
+        pos_testing = self.preprocessing.preprocess_tweets(pos_testing)
+        neg_testing = self.preprocessing.preprocess_tweets(neg_testing)
 
         # Testing Features
         pos_testing_counts = self.c_vect.transform(pos_testing)
