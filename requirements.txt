@@ -1,6 +1,6 @@
 Flask==0.10.1
 Flask-Assets==0.11
-Jinja2==2.8
+Jinja2==2.11.3
 -e git+https://github.com/Lasagne/Lasagne.git@8f4f9b26b90abcb303da2cbe9ab04f63676aa6bf#egg=Lasagne-dev
 MarkupSafe==0.23
 PAM==0.4.2
