@@ -4,7 +4,7 @@ Jinja2==2.8
 -e git+https://github.com/Lasagne/Lasagne.git@8f4f9b26b90abcb303da2cbe9ab04f63676aa6bf#egg=Lasagne-dev
 MarkupSafe==0.23
 PAM==0.4.2
-Pillow==2.9.0
+Pillow==9.0.0
 PyJWT==1.0.0
 PyMySQL==0.6.2
 Pygments==2.1.3
