@@ -44,7 +44,7 @@ html5lib==0.999
 httplib2==0.9
 idna==2.0
 ipaddress==1.0.14
-ipython==2.3.0
+ipython==7.16.3
 itsdangerous==0.24
 joblib==0.9.4
 js-host==0.2.0
