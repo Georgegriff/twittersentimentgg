@@ -46,7 +46,7 @@ idna==2.0
 ipaddress==1.0.14
 ipython==2.3.0
 itsdangerous==0.24
-joblib==0.9.4
+joblib==1.2.0
 js-host==0.2.0
 lockfile==0.10.2
 lxml==3.4.4
